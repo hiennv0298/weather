@@ -1,83 +1,78 @@
 import React, { Component, useEffect, useRef, useState } from 'react';
-import { GoogleMap, LoadScript, DrawingManager } from '@react-google-maps/api';
-import _ from 'lodash';
-import API_KEY from './../../../apimap.json';
-import { Bound, MapProps } from "../constants/typeDefinition";
+import { Bound, Coordinate, City, Weather } from "../../constants/typeDefinition";
+import L, { LatLngBounds } from "leaflet"
+import "leaflet-draw"
+import { removeDupWithProp, unSignedArray } from '../../constants/Utils'
 
-const containerStyle = {
-  width: '100%',
-  height: '100%'
-};
+import LeftComponent from '../popup/LeftComponent'
 
-const center = {
-  lat: 10.75,
-  lng: 106.666672
-};
+const cities: City[] = require("../../city.list.json");
 
+const MapComponent = () => {
 
-const Map = (props: MapProps) => {
-
-  const googleMapRef: any = useRef();
-  const [bound, setBound] = useState<Bound>();
-
-
-  const onOverlayCompelete = (e: any) => {
-    if (e.type === google.maps.drawing.OverlayType.RECTANGLE) {
-      const bounds = e.overlay.getBounds();
-      console.log(bounds);
-
-    }
-
-  }
+  const childRef: any = useRef();
 
   useEffect(() => {
-    if (googleMapRef.current) {
-      console.log(googleMapRef.current);
-    }
-  }, []);
+    const map = L.map("map").setView([
+      10.21525517768127, 105.90577133424291], 8);
 
-  const onZoomChanged = () => {
-    if (googleMapRef.current) {
-      console.log(googleMapRef.current.props.zoom);
-      console.log(googleMapRef.current.state.map.zoom);
-    }
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const drawControl = new L.Control.Draw({
+      position: "topleft",
+      draw: {
+        circle: false,
+        polygon: false,
+        polyline: false,
+        circlemarker: false
+      }
+    });
+    const drawn_items = L.featureGroup([]).addTo(map);
+    map.addControl(drawControl);
+
+
+    map.on(L.Draw.Event.CREATED, async function (event: any) {
+      let layer = event.layer;
+      drawn_items.addLayer(layer);
+      if (event.layerType === "rectangle") {
+        const bound = layer.getBounds();
+        const weathers = await Promise.all(getWeathers(bound));
+        childRef.current.getValue(weathers);
+      }
+      if (event.layerType === "marker") {
+        console.log(layer._latlng);
+        const coord = layer._latlng;
+        const requestLink = `https://api.openweathermap.org/data/2.5/weather?lat=${coord.lat}&lon=${coord.lng}&appid=671129d1fe0e5b8dfac8cf570540017e`;
+        fetch(requestLink)
+          .then(res => res.json()).then(data => console.log(data));
+      }
+    });
+
+  })
+
+  const getWeathers = (bound: any) => {
+    const rectangleCities = cities.filter(city => bound.contains(city.coord));
+    const arrUnsign = unSignedArray(rectangleCities, "name");
+    const arrWithoutDup = removeDupWithProp(arrUnsign, "name");
+    const apiWeather = arrWithoutDup.map(async (city) => {
+      const requestLink = `https://api.openweathermap.org/data/2.5/weather?id=${city.id}&appid=671129d1fe0e5b8dfac8cf570540017e`;
+      const weather = await fetch(requestLink).then(res => res.json()).then(data => data);
+      return weather;
+    });
+    return apiWeather;
   }
 
-  return (
-    <GoogleMap
-      ref={googleMapRef}
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={8}
-      onZoomChanged={onZoomChanged}
-      options={{
-        minZoom: 3
-      }}
-    >
-      <DrawingManager
-        options={
-          {
-            drawingControlOptions: {
-              position: google.maps.ControlPosition.TOP_RIGHT,
-              drawingModes:
-                [
-                  google.maps.drawing.OverlayType.MARKER,
-                  google.maps.drawing.OverlayType.RECTANGLE,
-                ]
-            },
-            rectangleOptions: {
-              fillColor: "#BDFFFC",
-              strokeColor: "#FDFC00",
-            }
-          }
-        }
-        onOverlayComplete={onOverlayCompelete}
-      />
-    </GoogleMap>
-  )
 
+
+  return (
+    <div id="containermap">
+      <LeftComponent ref={childRef} />
+      <div id="map" />
+    </div>
+  )
 }
 
-
-export default Map;
-
+export default MapComponent;
