@@ -13,8 +13,27 @@ const MapComponent = () => {
   const childRef: any = useRef();
 
   useEffect(() => {
-    const map = L.map("map").setView([
+    let map = L.map("map").setView([
       10.21525517768127, 105.90577133424291], 8);
+
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    const getGeo = (pos: any) => {
+      const crd = pos.coords;
+      map.setView([
+        crd.latitude, crd.longitude], 8);
+    }
+
+    const errGeo = (err: any) => {
+      map.setView([
+        10.21525517768127, 105.90577133424291], 8);
+    }
+
+    navigator.geolocation.getCurrentPosition(getGeo, errGeo, options);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -71,7 +90,7 @@ const MapComponent = () => {
       const arrUnsign = unSignedArray(rectangleCities, "name");
       const arrWithoutDup = removeDupWithProp(arrUnsign, "name");
       const apiWeather = arrWithoutDup.map(async (city) => {
-        const requestLink = `https://api.openweathermap.org/data/2.5/weather?id=${city.id}&appid=671129d1fe0e5b8dfac8cf570540017e`;
+        const requestLink = `https://api.openweathermap.org/data/2.5/weather?id=${city.id}&units=metric&appid=671129d1fe0e5b8dfac8cf570540017e`;
         const weather = await fetch(requestLink).then((res: any) => {
           if (res.status === 200) {
             return res.json();
@@ -96,7 +115,7 @@ const MapComponent = () => {
 
   const getWeather = (coord: any) => {
     try {
-      const requestLink = `https://api.openweathermap.org/data/2.5/weather?lat=${coord.lat}&lon=${coord.lng}&appid=671129d1fe0e5b8dfac8cf570540017e`;
+      const requestLink = `https://api.openweathermap.org/data/2.5/weather?lat=${coord.lat}&lon=${coord.lng}&units=metric&appid=671129d1fe0e5b8dfac8cf570540017e`;
       const weather = fetch(requestLink).then((res: any) => {
         if (res.status === 200) {
           return res.json();

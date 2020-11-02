@@ -43,3 +43,13 @@ export function getIcon(key: any, size?: string): string {
     return `http://openweathermap.org/img/wn/${key}${size ? "@" + size : ""}.png`;
 }
 
+export function formatTime(timeSpan: number): string {
+    const date = new Date(timeSpan);
+
+    const d = date.getDate();
+    const m = date.getMonth() + 1;
+    const y = date.getFullYear();
+    const f = date.toLocaleTimeString();
+
+    return (d <= 9 ? '0' + d : d) + '-' + (m <= 9 ? '0' + m : m) + '-' + y + ' ' + f;
+}

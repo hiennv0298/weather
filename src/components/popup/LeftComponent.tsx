@@ -4,10 +4,11 @@ import { useSpring, animated } from 'react-spring'
 import WeatherDetail from './Weather'
 import clear from '../../assets/clear.jpg'
 
+
 const LeftComponent = forwardRef((props, ref) => {
 
-    const [weathers, setWeathers] = useState<Weather[]>([]);    
-    const [isShown, setIsShow] = useState(false);    
+    const [weathers, setWeathers] = useState<Weather[]>([]);
+    const [isShown, setIsShow] = useState(false);
     const leftRef: any = useRef();
 
     useImperativeHandle(
@@ -29,19 +30,24 @@ const LeftComponent = forwardRef((props, ref) => {
         leftRef.current.style.backgroundImage = `url(${image})`;
     }
 
-    return <div style={{backgroundImage: `url(${clear})`}} className="left-container" ref={leftRef}>
+    return <>
+        <div style={{ backgroundImage: `url(${clear})` }} className="left-container" ref={leftRef}>
+            <div className="weathers">
+                {
+                    (weathers && isShown) &&
+                    weathers.map((item, i) =>
+                        <WeatherDetail weather={item} key={i} click={setBackground} />
+                    )
+                }
+            </div>
+        </div>
         <div className={isShown ? "close-left-show" : "close-left-hide"}>
-            <button onClick={removeLeftContainer}>X</button>
+            <div className="close-container" onClick={removeLeftContainer}>
+                <div className="leftright"></div>
+                <div className="rightleft"></div>
+            </div>
         </div>
-        <div className="weathers">
-        {
-            (weathers && isShown )&&
-            weathers.map((item, i) =>
-                    <WeatherDetail weather={item} key={i} click={setBackground} />
-            )
-        }
-        </div>
-    </div>
+    </>
 })
 
 export default LeftComponent;
