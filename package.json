@@ -1,5 +1,6 @@
 {
   "name": "weather-app",
+  "homepage": "http://hiennv0298.github.io/weather",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -48,9 +49,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "webpack --config webpack.config.js",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "keywords": [
     "react",
