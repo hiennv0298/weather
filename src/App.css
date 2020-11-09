@@ -37,7 +37,7 @@ html, body {
   /* Firefox */
 }
 
-.left-container {
+.left-container {  
   box-shadow: rgba(240, 46, 170, 0.4) 0px 5px, rgba(240, 46, 170, 0.3) 0px 10px, rgba(240, 46, 170, 0.2) 0px 15px, rgba(240, 46, 170, 0.1) 0px 20px, rgba(240, 46, 170, 0.05) 0px 25px;
   background-size: cover;
   background-repeat: no-repeat;
@@ -45,7 +45,7 @@ html, body {
   top: 50px;
   right: 50px;
   max-height: 80vh;
-  max-width: 50vw;
+  max-width: 25vw;
   z-index: 9999;
   overflow: scroll;
   font-size: 24px;
@@ -54,6 +54,10 @@ html, body {
   resize: both;
   background: #ffd73e33;
   border-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E %3Cstyle%3Epath%7Banimation:stroke 5s infinite linear%3B%7D%40keyframes stroke%7Bto%7Bstroke-dashoffset:776%3B%7D%7D%3C/style%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%232d3561' /%3E%3Cstop offset='25%25' stop-color='%23c05c7e' /%3E%3Cstop offset='50%25' stop-color='%23f3826f' /%3E%3Cstop offset='100%25' stop-color='%23ffb961' /%3E%3C/linearGradient%3E %3Cpath d='M1.5 1.5 l97 0l0 97l-97 0 l0 -97' stroke-linecap='square' stroke='url(%23g)' stroke-width='3' stroke-dasharray='388'/%3E %3C/svg%3E") 1;
+}
+
+.padding-75{
+  padding: .75rem;
 }
 
 .text-between {
@@ -131,10 +135,7 @@ html, body {
   padding-left: 25px;
 }
 
-.left-weather {
-  cursor: pointer;
-  border: dashed 2px white;
-}
+
 
 .weather-detail {
   padding: 0.5rem;
@@ -202,4 +203,51 @@ html, body {
 
 .close-container:hover label {
   opacity: 1;
+}
+
+.left-weather {
+  cursor: pointer;
+  border: dashed 2px white;
+  margin: 0.5rem 0;
+  padding: 0.25rem;
+  position: relative;
+}
+
+.chart{
+  margin: auto;
+  top: 75px;
+  left: 50px;
+  min-width: 40vw;
+  max-width: 60vw;
+  max-height: 80vh;
+  min-height: 50vh;
+  float: left;
+  z-index: 999999;
+  overflow: hidden;
+  position: absolute;
+  background: white;
+  border-radius: 4px;
+}
+
+.forecast-button{
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  color: white;
+  font-weight: 400;
+  font-size: 14px;
+  border-radius: 3px;
+  background: linear-gradient(green,yellow);
+}
+
+.forecast-button:hover{
+  transform: scale(1.2);
+  transition-duration: 500ms;
+  background: linear-gradient(red,yellow);
+}
+
+.forecast-button{
+  transform: scale(1);
+  transition-duration: 500ms;
+  background: linear-gradient(green,yellow);
 }

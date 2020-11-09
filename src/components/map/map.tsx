@@ -1,6 +1,6 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
-import { Bound, Coordinate, City, Weather } from "../../constants/typeDefinition";
-import L, { LatLngBounds } from "leaflet"
+import React, { useEffect, useRef } from 'react';
+import { City } from "../../constants/typeDefinition";
+import L from "leaflet"
 import "leaflet-draw"
 import { removeDupWithProp, unSignedArray } from '../../constants/Utils'
 

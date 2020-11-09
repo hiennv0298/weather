@@ -1,14 +1,14 @@
-import React, { useState, useRef, HtmlHTMLAttributes, forwardRef, useImperativeHandle, useEffect } from 'react'
+import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react'
 import { Weather } from '../../constants/typeDefinition'
-import { useSpring, animated } from 'react-spring'
 import WeatherDetail from './Weather'
-import clear from '../../assets/clear.jpg'
-
+import { getImageWithMain } from '../../constants/Utils'
+import Chart from './Chart'
 
 const LeftComponent = forwardRef((props, ref) => {
 
     const [weathers, setWeathers] = useState<Weather[]>([]);
     const [isShown, setIsShow] = useState(false);
+    const [isShownChart, setIsShowChart] = useState(false);
     const leftRef: any = useRef();
 
     useImperativeHandle(
@@ -16,7 +16,11 @@ const LeftComponent = forwardRef((props, ref) => {
         () => ({
             getValue: (data: Weather[]) => {
                 setWeathers(data);
-                setIsShow(true);
+                if (data.length > 0) {
+                    setIsShow(true);
+                    const bg = getImageWithMain(data[0]?.weather[0].main);
+                    setBackground(bg);
+                }
             }
         }),
     );
@@ -26,17 +30,23 @@ const LeftComponent = forwardRef((props, ref) => {
     }
 
     const setBackground = (image: any) => {
-        console.log(image);
         leftRef.current.style.backgroundImage = `url(${image})`;
     }
 
-    return <>
-        <div style={{ backgroundImage: `url(${clear})` }} className="left-container" ref={leftRef}>
+    const forecast = (coord: Coordinates) => {
+        setIsShowChart(true);
+    }
+
+    return <div className="popup">
+        {
+            isShownChart && <Chart />
+        }
+        <div className={isShown ? "left-container padding-75" : "left-container"} ref={leftRef}>
             <div className="weathers">
                 {
                     (weathers && isShown) &&
                     weathers.map((item, i) =>
-                        <WeatherDetail weather={item} key={i} click={setBackground} />
+                        <WeatherDetail weather={item} key={i} click={setBackground} forecast={forecast} />
                     )
                 }
             </div>
@@ -47,7 +57,7 @@ const LeftComponent = forwardRef((props, ref) => {
                 <div className="rightleft"></div>
             </div>
         </div>
-    </>
+    </div>
 })
 
 export default LeftComponent;

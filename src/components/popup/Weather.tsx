@@ -1,8 +1,8 @@
 import { toNumber } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Weather } from '../../constants/typeDefinition'
-import { formatTime, getIcon } from '../../constants/Utils'
-import { ThunderStorm, Atmosphere, Rain, Clear, Clouds, Snow, Drizzle } from '../../constants/Utils'
+import { formatTime } from '../../constants/Utils'
+import { getImageWithMain } from '../../constants/Utils'
 
 import Carousel from './carousel'
 
@@ -12,56 +12,24 @@ const style: any = {
 
 
 
-const WeatherDetail: React.FC<{ weather: Weather, click: any }> = ({ weather, click }) => {
+const WeatherDetail: React.FC<{ weather: Weather, click: any, forecast: any }> = ({ weather, click, forecast }) => {
 
-    let background = "Clear";
-
-    const main = {
-        ThunderStorm: ThunderStorm,
-        Drizzle: Drizzle,
-        Clouds: Clouds,
-        Rain: Rain,
-        Snow: Snow,
-        Atmosphere: Atmosphere,
-        Clear: Clear
-    };
+    let background = "";
 
     const setImage = () => {
-        switch (weather.weather[0].main) {
-            case "ThunderStorm":
-                background = main.ThunderStorm;
-                break;
-            case "Drizzle":
-                background = main.Drizzle;
-                break;
-            case "Clouds":
-                background = main.Clouds;
-                break;
-            case "Rain":
-                background = main.Rain;
-                break;
-            case "Snow":
-                background = main.Snow;
-                break;
-            case "Atmosphere":
-                background = main.Atmosphere;
-                break;
-            case "Clear":
-                background = main.Clear;
-                break;
-            default:
-                break;
-        }
+        background = getImageWithMain(weather.weather[0].main);
     }
 
     useEffect(() => {
-        setImage();
+        setImage(); 
     });
+
 
     return (
         <div>
             {weather &&
-                <div style={style} onClick={() => click(background)} className="left-weather" >
+                <div style={style} onClick={() => click(background)} className="left-weather">
+                    <button className="forecast-button" onClick={() => forecast(weather.coord)}>Forecast</button>
                     <div className="weather-detail">
                         <div className="weather-header">
                             <Carousel items={weather.weather} />
@@ -97,13 +65,13 @@ const WeatherDetail: React.FC<{ weather: Weather, click: any }> = ({ weather, cl
                             <span className="h4">Has Clouds: {weather.clouds.all}%</span>
                             <span className="h4">Rain:</span>
                             <div className="rain">
-                                <span className="h4">Last 1h: {weather.rain?.["1h"]}mm</span>
-                                <span className="h4">Last 3h: {weather.rain?.["3h"]}mm</span>
+                                <span className="h4">Last 1h: {weather.rain?.["1h"] ? weather.rain?.["1h"] : "0"} mm</span>
+                                <span className="h4">Last 3h: {weather.rain?.["3h"] ? weather.rain?.["3h"] : "0"} mm</span>
                             </div>
                             <span className="h4">Snow:</span>
                             <div className="snow">
-                                <span className="h4">Last 1h: {weather.snow?.["1h"]}mm</span>
-                                <span className="h4">Last 3h: {weather.snow?.["3h"]}mm</span>
+                                <span className="h4">Last 1h: {weather.snow?.["1h"] ? weather.snow?.["1h"] : "0"} mm</span>
+                                <span className="h4">Last 3h: {weather.snow?.["3h"] ? weather.snow?.["3h"] : "0"} mm</span>
                             </div>
                         </div>
                     </div>

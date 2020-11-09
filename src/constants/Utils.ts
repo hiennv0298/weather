@@ -53,3 +53,33 @@ export function formatTime(timeSpan: number): string {
 
     return (d <= 9 ? '0' + d : d) + '-' + (m <= 9 ? '0' + m : m) + '-' + y + ' ' + f;
 }
+
+export function getImageWithMain(main?: string): string {
+    let background = "Clear";
+    switch (main) {
+        case "ThunderStorm":
+            background = ThunderStorm;
+            break;
+        case "Drizzle":
+            background = Drizzle;
+            break;
+        case "Clouds":
+            background = Clouds;
+            break;
+        case "Rain":
+            background = Rain;
+            break;
+        case "Snow":
+            background = Snow;
+            break;
+        case "Atmosphere":
+            background = Atmosphere;
+            break;
+        case "Clear":
+            background = Clear;
+            break;
+        default:
+            break;
+    }
+    return background;
+}
